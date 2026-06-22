@@ -14,11 +14,45 @@ class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController description = TextEditingController();
 
   List<TodoModel> todo = [];
+  bool isUpdate = false;
+  int? updateID;
 
   @override
   void initState() {
     getTodo();
     super.initState();
+  }
+
+  void editTodo(TodoModel todo) {
+    title.text = todo.title;
+    description.text = todo.description;
+    updateID = todo.id;
+    updateID;
+    setState(() {
+      isUpdate = true;
+    });
+  }
+
+  Future<void> saveOrUpdate() async {
+    var valueTodo = TodoModel(
+      title: title.text.trim(),
+      description: description.text.trim(),
+      id: updateID,
+    );
+
+    if (isUpdate) {
+      await DatabaseHelper.updateTodo(valueTodo);
+    } else {
+      await DatabaseHelper.insertToDo(valueTodo);
+    }
+
+    description.clear();
+    title.clear();
+    setState(() {
+      isUpdate = false;
+      updateID = null;
+    });
+    getTodo();
   }
 
   Future<void> getTodo() async {
@@ -38,8 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
 
       body: SingleChildScrollView(
-        padding: EdgeInsetsGeometry.all(16),
-
+        padding: EdgeInsetsGeometry.all(8),
         child: Column(
           spacing: 12,
           children: [
@@ -52,24 +85,18 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             TextFormField(
+              maxLines: 4,
               controller: description,
               decoration: InputDecoration(
                 border: OutlineInputBorder(borderRadius: .circular(12)),
-                hintText: 'desc',
+                hintText: 'descreption',
               ),
             ),
             ElevatedButton(
               onPressed: () async {
-                var valueTodo = TodoModel(
-                  title: title.text.trim(),
-                  description: description.text.trim(),
-                );
-                await DatabaseHelper.insertToDo(valueTodo);
-                getTodo();
-                description.clear();
-                title.clear();
+                saveOrUpdate();
               },
-              child: Text('Save'),
+              child: Text(isUpdate ? 'Update' : 'Save'),
             ),
 
             ListView.builder(
@@ -78,16 +105,30 @@ class _MyHomePageState extends State<MyHomePage> {
               itemCount: todo.length,
               itemBuilder: (BuildContext context, int index) {
                 var todos = todo[index];
-                return ListTile(
-                  leading: Text(todos.id.toString()),
-                  title: Text(todos.title),
-                  subtitle: Text(todos.description),
-                  trailing: IconButton(
-                    onPressed: () async {
-                      DatabaseHelper.deltTode(todos.id!);
-                      getTodo();
-                    },
-                    icon: Icon(Icons.delete_outline),
+                return Card(
+                  child: ListTile(
+                    leading: Text(todos.id.toString()),
+                    title: Text(todos.title),
+                    subtitle: Text(todos.description),
+                    trailing: Column(
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            editTodo(todos);
+                            // print('todo updated ');
+                          },
+                          child: Icon(Icons.edit),
+                        ),
+
+                        InkWell(
+                          onTap: () async {
+                            DatabaseHelper.deltTode(todos.id!);
+                            getTodo();
+                          },
+                          child: Icon(Icons.delete_outline),
+                        ),
+                      ],
+                    ),
                   ),
                 );
               },

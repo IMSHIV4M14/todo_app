@@ -44,4 +44,15 @@ class DatabaseHelper {
     final db = await getDB();
     return db.delete('Todo', where: 'id = ?', whereArgs: [id]);
   }
+
+  // edit todo
+  static Future<int> updateTodo(TodoModel todo) async {
+    final db = await getDB();
+    return await db.update(
+      'Todo',
+      todo.toMap(),
+      where: 'id = ?',
+      whereArgs: [todo.id],
+    );
+  }
 }
