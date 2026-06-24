@@ -23,13 +23,13 @@ class _UtilsScreenState extends State<UtilsScreen> {
   // file picker
 
   Future<void> pickFile() async {
-    FilePickerResult? _filePickerResult = await FilePicker.pickFiles(
+    FilePickerResult? filePickerResult = await FilePicker.pickFiles(
       allowMultiple: true,
       allowedExtensions: ['pdf'],
     );
-    if (_filePickerResult != null) {
+    if (filePickerResult != null) {
       setState(() {
-        fileName = _filePickerResult.files.single.name;
+        fileName = filePickerResult.files.single.name;
       });
     }
   }
