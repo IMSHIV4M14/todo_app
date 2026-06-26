@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 class UtilsScreen extends StatefulWidget {
   const UtilsScreen({super.key});
@@ -16,6 +17,8 @@ class _UtilsScreenState extends State<UtilsScreen> {
   File? imageCamera;
   File? imageGallery;
   String? fileName;
+  String? filePath;
+
   // picked image from gallery
 
   // agginment
@@ -30,6 +33,7 @@ class _UtilsScreenState extends State<UtilsScreen> {
     if (filePickerResult != null) {
       setState(() {
         fileName = filePickerResult.files.single.name;
+        filePath = filePickerResult.files.single.path;
       });
     }
   }
@@ -99,6 +103,28 @@ class _UtilsScreenState extends State<UtilsScreen> {
               ),
 
               Text(fileName ?? 'n/a'),
+              // press button to open file
+              ElevatedButton(
+                onPressed: filePath == null
+                    ? null
+                    : () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => Scaffold(
+                              appBar: AppBar(
+                                title: Text(
+                                  fileName == null ? fileName! : 'PDF File',
+                                ),
+                              ),
+                              body: SfPdfViewer.file(File(filePath!)),
+                            ),
+                          ),
+                        );
+                      },
+                child: Text('Open PDF'),
+              ),
+              //
             ],
           ),
         ),
