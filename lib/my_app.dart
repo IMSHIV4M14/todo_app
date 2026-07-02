@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app/Screens/local_flutter_notification_screen.dart';
+import 'package:todo_app/Screens/google_login_screen.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -9,7 +9,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.deepPurple)),
-      home: const LocalFlutterNotificationScreen(),
+      home: const GoogleLoginScreen(),
     );
   }
 }
